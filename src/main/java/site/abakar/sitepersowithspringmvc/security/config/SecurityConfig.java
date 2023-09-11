@@ -20,10 +20,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.formLogin().loginPage("/login").defaultSuccessUrl("/").permitAll();
         httpSecurity.csrf().disable();
-        httpSecurity.authorizeHttpRequests().requestMatchers("/css/**", "/js/**", "/admin/**").permitAll();
+        httpSecurity.authorizeHttpRequests().requestMatchers("/bootstrap/css/**", "/bootstrap/js/**").permitAll();
         httpSecurity.exceptionHandling().accessDeniedPage("/err-403");
         httpSecurity.userDetailsService(userDetailService);
-        httpSecurity.authorizeHttpRequests().anyRequest().permitAll();
+        httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
         return httpSecurity.build();
     }
 }

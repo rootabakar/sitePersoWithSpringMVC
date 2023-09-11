@@ -82,6 +82,12 @@
                     <div class="cont d-flex">
                         <div class="w-50">
                             <h2>LISTE DES COMPETENCES </h2>
+                            <div th:if="${done_sup}" class="alert alert-success mt-2 mb-2">
+                                <span th:text="${done_sup}"></span>
+                            </div>
+                            <div th:if="${done_mo}" class="alert alert-success mt-2 mb-2">
+                                <span th:text="${done_mo}"></span>
+                            </div>
                             <table class="table table-striped table-responsive">
                                 <thead>
                                     <tr>
@@ -95,13 +101,16 @@
                                         <td th:text="${competence.id}">1</td>
                                         <td th:text="${competence.nom}">Compétence 1</td>
                                         <td>
-                                            <a href="#" class="btn btn-primary">
+                                            <a class="btn btn-primary"
+                                               data-bs-toggle="modal" th:data-bs-target="'#modifierModal-' + ${competence.id}">
                                                 <i class="bi bi-pencil"></i> Modifier
                                             </a>
-                                            <a href="#" class="btn btn-info">
+                                            <a class="btn btn-info"
+                                               data-bs-toggle="modal" th:data-bs-target="'#confirmationModalDe-' + ${competence.id}">
                                                 <i class="bi bi-eye"></i> Détail
                                             </a>
-                                            <a href="#" class="btn btn-danger">
+                                            <a class="btn btn-danger"
+                                               data-bs-toggle="modal" th:data-bs-target="'#confirmationModal-' + ${competence.id}">
                                                 <i class="bi bi-trash"></i> Supprimer
                                             </a>
                                         </td>
@@ -142,10 +151,72 @@
         </div>
     </div>
 
+    <!--BOITE MODALE POUR LES DETAILS DES PRODUITS -->
+    <div th:each="competence:${competences}" class="modal fade" th:id="'confirmationModalDe-' + ${competence.id}" tabindex="-1" th:aria-labelledby="'confirmationModalLabelDe-' + ${competence.id}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:id="'confirmationModalLabel-' + ${competence.id}">DETAIL PRODUIT</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <strong>Nom :</strong>
+                    <p th:text="${competence.nom}"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--BOITE MODALE POUR LA SUPPRESSION DES PRODUITS -->
+    <div th:each="competence:${competences}" class="modal fade" th:id="'confirmationModal-' + ${competence.id}" tabindex="-1" th:aria-labelledby="'confirmationModalLabel-' + ${competence.id}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:id="'confirmationModalLabel-' + ${competence.id}">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer le produit : <strong th:text="${competence.nom}"></strong> ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form th:action="@{/admin/competence/delete/{id} (id=${competence.id})}" method="post">
+                        <button class="btn btn-danger" type="submit">Confirmer la suppression</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--BOITE MODALE POUR LA MODIFICATION DES PRODUITS -->
+    <div th:each="competence:${competences}" class="modal fade" th:id="'modifierModal-' + ${competence.id}" tabindex="-1" th:aria-labelledby="'modifierModalLabel-' + ${competence.id}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:id="'modifierModalLabel-' + ${competence.id}">Modifier le produit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" th:action="@{/admin/competence/alter/{id} (id=${competence.id})}">
+                        <div class="mb-3">
+                            <label for="nom_modif" class="form-label">Nom du Produit</label>
+                            <input type="text" th:value="${competence.nom}" class="form-control" id="nom_modif" name="nom" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
 
 </body>

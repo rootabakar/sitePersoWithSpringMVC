@@ -74,10 +74,67 @@
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Experience</h1>
+                <h1 class="mt-4">Langage</h1>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item active">Dashboard</li>
                 </ol>
+
+                <div class="cont d-flex">
+                    <div class="w-50">
+                        <h2>LISTE DES COMPETENCES </h2>
+                        <div th:if="${done_sup}" class="alert alert-success mt-2 mb-2">
+                            <span th:text="${done_sup}"></span>
+                        </div>
+                        <div th:if="${done_mo}" class="alert alert-success mt-2 mb-2">
+                            <span th:text="${done_mo}"></span>
+                        </div>
+                        <table class="table table-striped table-responsive">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nom</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="langage:${langages}">
+                                <td th:text="${langage.id}">1</td>
+                                <td th:text="${langage.nom}">Compétence 1</td>
+                                <td>
+                                    <a class="btn btn-primary"
+                                       data-bs-toggle="modal" th:data-bs-target="'#modifierModal-' + ${langage.id}">
+                                        <i class="bi bi-pencil"></i> Modifier
+                                    </a>
+                                    <a class="btn btn-info"
+                                       data-bs-toggle="modal" th:data-bs-target="'#confirmationModalDe-' + ${langage.id}">
+                                        <i class="bi bi-eye"></i> Détail
+                                    </a>
+                                    <a class="btn btn-danger"
+                                       data-bs-toggle="modal" th:data-bs-target="'#confirmationModal-' + ${langage.id}">
+                                        <i class="bi bi-trash"></i> Supprimer
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="w-50">
+                        <div class="container">
+                            <h2>AJOUTER</h2>
+                            <div th:if="${done}" class="alert alert-success mt-2 mb-2">
+                                <span th:text="${done}"></span>
+                            </div>
+                            <form th:action="@{/admin/langage/add}" method="post">
+                                <div class="">
+                                    <label for="nom" class="form-label">Nom Langage</label>
+                                    <input type="text" name="nom" class="form-control" id="nom">
+                                </div>
+                                <button type="submit" class="mt-3 btn btn-primary">AJOUTER</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
         <footer class="py-4 bg-light mt-auto">
@@ -94,12 +151,78 @@
         </footer>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-<script src="js/scripts.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-<script src="assets/demo/chart-area-demo.js"></script>
-<script src="assets/demo/chart-bar-demo.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-<script src="js/datatables-simple-demo.js"></script>
+
+    <!--BOITE MODALE POUR LES DETAILS DES PRODUITS -->
+    <div th:each="langage:${langages}" class="modal fade" th:id="'confirmationModalDe-' + ${langage.id}" tabindex="-1" th:aria-labelledby="'confirmationModalLabelDe-' + ${langage.id}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:id="'confirmationModalLabel-' + ${langage.id}">Detail Element</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <strong>Nom :</strong>
+                    <p th:text="${langage.nom}"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--BOITE MODALE POUR LA SUPPRESSION DES PRODUITS -->
+    <div th:each="langage:${langages}" class="modal fade" th:id="'confirmationModal-' + ${langage.id}" tabindex="-1" th:aria-labelledby="'confirmationModalLabel-' + ${langage.id}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:id="'confirmationModalLabel-' + ${langage.id}">Confirmation de suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer le produit : <strong th:text="${langage.nom}"></strong> ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form th:action="@{/admin/langage/delete/{id} (id=${langage.id})}" method="post">
+                        <button class="btn btn-danger" type="submit">Confirmer la suppression</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--BOITE MODALE POUR LA MODIFICATION DES PRODUITS -->
+    <div th:each="langage:${langages}" class="modal fade" th:id="'modifierModal-' + ${langage.id}" tabindex="-1" th:aria-labelledby="'modifierModalLabel-' + ${langage.id}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:id="'modifierModalLabel-' + ${langage.id}">Modifier le produit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" th:action="@{/admin/langage/alter/{id} (id=${langage.id})}">
+                        <div class="mb-3">
+                            <label for="nom_modif" class="form-label">Nom du Produit</label>
+                            <input type="text" th:value="${langage.nom}" class="form-control" id="nom_modif" name="nom" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="assets/demo/chart-area-demo.js"></script>
+    <script src="assets/demo/chart-bar-demo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="js/datatables-simple-demo.js"></script>
+
 </html>

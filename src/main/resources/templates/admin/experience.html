@@ -78,6 +78,49 @@
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item active">Dashboard</li>
                         </ol>
+                        <div th:if="${done}" class="alert alert-success mb-2 mt-2">
+                            <span th:text="${done}"></span>
+                        </div>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ajouterProduitModal">AJOUTER UN ELEMENT</button>
+                        <div class="">
+                            <table class="table table-striped table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nom Poste</th>
+                                        <th>Date</th>
+                                        <th>Nom Entreprise</th>
+                                        <th>Pays Ville</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="experience:${experiences}">
+                                    <td th:text="${experience.id}">1</td>
+                                    <td th:text="${experience.nomPoste}">1</td>
+                                    <td th:text="${experience.date}">1</td>
+                                    <td th:text="${experience.nomEntreprise}">1</td>
+                                    <td th:text="${experience.paysVille}">1</td>
+                                    <td th:text="${experience.description}">Compétence 1</td>
+                                    <td>
+                                        <a class="btn btn-primary"
+                                           data-bs-toggle="modal" th:data-bs-target="'#modifierModal-' + ${experience.id}">
+                                            <i class="bi bi-pencil"></i> Modifier
+                                        </a>
+                                        <a class="btn btn-info"
+                                           data-bs-toggle="modal" th:data-bs-target="'#confirmationModalDe-' + ${experience.id}">
+                                            <i class="bi bi-eye"></i> Détail
+                                        </a>
+                                        <a class="btn btn-danger"
+                                           data-bs-toggle="modal" th:data-bs-target="'#confirmationModal-' + ${experience.id}">
+                                            <i class="bi bi-trash"></i> Supprimer
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
                     </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
@@ -94,12 +137,136 @@
                 </footer>
             </div>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/chart-area-demo.js"></script>
-        <script src="assets/demo/chart-bar-demo.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="js/datatables-simple-demo.js"></script>
+        <!--BOITE MODALE POUR LES DETAILS DES PRODUITS -->
+        <div th:each="experience:${experiences}" class="modal fade" th:id="'confirmationModalDe-' + ${experience.id}" tabindex="-1" th:aria-labelledby="'confirmationModalLabelDe-' + ${experience.id}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" th:id="'confirmationModalLabel-' + ${experience.id}">DETAIL PRODUIT</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <strong>Nom Poste:</strong>
+                        <p th:text="${experience.nomPoste}"></p>
+                        <strong>Date :</strong>
+                        <p th:text="${experience.date}"></p>
+                        <strong>Nom Entreprise :</strong>
+                        <p th:text="${experience.nomEntreprise}"></p>
+                        <strong>Pays Ville :</strong>
+                        <p th:text="${experience.paysVille}"></p>
+                        <strong>Description :</strong>
+                        <p th:text="${experience.description}"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--BOITE MODALE POUR LA SUPPRESSION DES PRODUITS -->
+        <div th:each="experience:${experiences}" class="modal fade" th:id="'confirmationModal-' + ${experience.id}" tabindex="-1" th:aria-labelledby="'confirmationModalLabel-' + ${experience.id}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" th:id="'confirmationModalLabel-' + ${experience.id}">Confirmation de suppression</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Êtes-vous sûr de vouloir supprimer le produit : <strong th:text="${experience.nomPoste}"></strong> ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <form th:action="@{/admin/experience/delete/{id}(id=${experience.id})}" method="post">
+                            <button class="btn btn-danger" type="submit">Confirmer la suppression</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--BOITE MODALE POUR LA MODIFICATION DES PRODUITS -->
+        <div th:each="experience:${experiences}" class="modal fade" th:id="'modifierModal-' + ${experience.id}" tabindex="-1" th:aria-labelledby="'modifierModalLabel-' + ${experience.id}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" th:id="'modifierModalLabel-' + ${experience.id}">Modifier l'element</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" th:action="@{/admin/experience/alter/{id}(id=${experience.id})}">
+                            <div class="mb-3">
+                                <label for="nomEcole_modif" class="form-label">Nom Poste</label>
+                                <input type="text" th:value="${experience.nomPoste}" name="nomPoste" class="form-control" id="nomEcole_modif">
+                            </div>
+                            <div class="mb-3">
+                                <label for="paysVille_modif" class="form-label">Date</label>
+                                <input type="text" th:value="${experience.date}" name="date" class="form-control" id="paysVille_modif">
+                            </div>
+                            <div class="mb-3">
+                                <label for="niveauEtudes_modif" class="form-label">Nom Entreprise</label>
+                                <input type="text" th:value="${experience.nomEntreprise}" name="nomEntreprise" class="form-control" id="niveauEtudes_modif">
+                            </div>
+                            <div class="mb-3">
+                                <label for="date_modif" class="form-label">Pays Ville</label>
+                                <input type="text" th:value="${experience.paysVille}" name="paysVille" class="form-control" id="date_modif">
+                            </div>
+                            <div class="mb-3">
+                                <label for="description_modif" class="form-label">Description</label>
+                                <input type="text" th:value="${experience.description}" name="description" class="form-control" id="description_modif">
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                                <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--BOITE MODALE POUR L'AJOUT DES ELEMENTS -->
+        <div class="modal fade" id="ajouterProduitModal" tabindex="-1" aria-labelledby="ajouterProduitModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ajouterProduitModalLabel">Ajouter un element</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" th:action="@{/admin/experience/add}">
+                            <div class="mb-3">
+                                <label for="nomEcole_modifAj" class="form-label">Nom Poste</label>
+                                <input type="text" name="nomPoste" class="form-control" id="nomEcole_modifAj" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="paysVille_modifAj" class="form-label">Date</label>
+                                <input type="text" name="date" class="form-control" id="paysVille_modifAj" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="date_modifAj" class="form-label">Nom Entreprise</label>
+                                <input type="text" name="nomEntreprise" class="form-control" id="date_modifAj" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="niveauEtudes_modifAj" class="form-label">Pays Ville</label>
+                                <input type="text" name="paysVille" class="form-control" id="niveauEtudes_modifAj">
+                            </div>
+                            <div class="mb-3">
+                                <label for="description_modifAj" class="form-label">Description</label>
+                                <input type="text" name="description" class="form-control" id="description_modifAj" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Ajouter</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="assets/demo/chart-area-demo.js"></script>
+    <script src="assets/demo/chart-bar-demo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="js/datatables-simple-demo.js"></script>
+
 </html>
