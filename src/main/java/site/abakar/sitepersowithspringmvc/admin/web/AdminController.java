@@ -10,7 +10,6 @@ import site.abakar.sitepersowithspringmvc.admin.entites.Educations;
 import site.abakar.sitepersowithspringmvc.admin.entites.Experiences;
 import site.abakar.sitepersowithspringmvc.admin.entites.Langages;
 import site.abakar.sitepersowithspringmvc.admin.service.AdminService;
-
 import java.security.Principal;
 import java.util.List;
 
@@ -174,6 +173,11 @@ public class AdminController {
         adminService.deleteLangage(id);
         redirectAttributes.addFlashAttribute("done_sup", "Element supprimer avec succes");
         return "redirect:/admin/langage";
+    }
+
+    @GetMapping("/test")
+    public String test(){
+        return "admin/test";
     }
 
 }
